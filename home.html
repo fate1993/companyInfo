@@ -8,13 +8,42 @@
         a {
             text-decoration: none;
         }
+
+        #searchBar {
+            display: block;
+            text-align: center;
+        }
+        #logo {
+            display: block;
+            margin-top: 5%;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+            }
+        #menu {
+            border-bottom: 1px solid gray;
+            padding-bottom: 40px;
+            display: grid;
+            grid-template-columns: 70px 70px ;
+            font-size: 1.2em;
+        }
+      
     </style>
 </head>
     <body>
-        <li> <a href="intro.html">소개</a></li>
-        <li> <a href="howtouse.html">사용법</a></li>
-        <input type="text" placeholder="종목명 / 종목코드를 입력하세요">
-        <img src="conpanyInfoLogo.png" width="272">
+
+        <div id="menu">
+            <div><a href="intro.html">소개</a></div>
+            <div><a href="howtouse.html">사용법</a></div>
+        </div>
+
+        <div id="logo">
+            <img src="conpanyInfoLogo.png">
+        </div>
+
+        <div id="searchBar">
+            <input type="text" placeholder="종목명 / 종목코드를 입력하세요" size=100>
+        </div>
         
     </body>
 </html>
