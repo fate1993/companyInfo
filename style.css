@@ -3,17 +3,11 @@
     margin: 0;
 }
 
+/*검색창*/
 #searchBar {
     display: block;
     text-align: center;
 }
-#logo {
-    display: block;
-    margin-top: 5%;
-    margin-left: auto;
-    margin-right: auto;
-    width: 40%;
-    }
 
 input{
     border: none;
@@ -31,6 +25,16 @@ input:hover{
 input:focus{
     border-color:#4d90fe;
 }
+
+#logo {
+    display: block;
+    margin-top: 5%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    }
+
+
 
 nav {
     background-color: black;
@@ -54,4 +58,13 @@ li a {
 
 li a:hover {
     background-color: gray;
+}
+
+/*기업정보 테이블*/
+table {
+    width: 100%;
+    text-align: center;
+    border: 1px solid gray;
+    border-collapse: collapse;
+    margin-top: 50px;
 }
