@@ -1,10 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-	pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>CompanyInfo</title>
 <link rel="stylesheet" href="style.css">
 <link rel="shortcut icon" href="#">
 </head>
@@ -14,60 +14,39 @@
 		crossorigin="anonymous"></script>
 	<nav>
 		<ul>
-			<li><a href="home.html">È¨</a></li>
-			<li><a href="intro.html">¼Ò°³</a></li>
-			<li><a href="howtouse.html">»ç¿ë¹ı</a></li>
-			<li><a href="list.html">±â¾÷¸ñ·Ï</a></li>
+			<li><a href="home.html">í™ˆ</a></li>
+			<li><a href="intro.html">ì†Œê°œ</a></li>
+			<li><a href="howtouse.html">ì‚¬ìš©ë²•</a></li>
+			<li><a href="list.html">ê¸°ì—…ëª©ë¡</a></li>
 		</ul>
 	</nav>
 	<div id="logo">
 		<img src="logo.png">
 	</div>
-	<input id="searchBar" value="" type="text">
-    <button id="search">°Ë»ö</button>
-    
-	<!--<form>
-		<input id="searchBar" name="searchBar" type="text"
-			placeholder="Á¾¸ñ¸í / Á¾¸ñÄÚµå¸¦ ÀÔ·ÂÇÏ¼¼¿ä" size=100>
-		<!--<input  type="button" value="°Ë»ö" style="font: 15px">
-	</form>-->
-	<!--  <button id="searchButton" type="button">°Ë»ö</button>-->
-	<p></p>
-
+	<div id="test">
+		<input id="searchBar" value="" type="text">
+		<button id="search">ê²€ìƒ‰</button>
+	</div>
 	<script>
-	$(document).ready(function() {
-		$('#search').click(function(){
-			var value = $("#searchBar").val();
-			$.ajax({
-		    	  method: "GET",
-		    	  url: "https://opendart.fss.or.kr/api/hyslrSttus.json?"+
-		    			 "crtfc_key=05b445d8c91586ba7a5a77367a090d27b9780ab5&"+
-		    			 "corp_code="+
-		    			 coNumber(value); +
-		    			 "&bsns_year=2018&"+
-		    			 "reprt_code=11011"
-		    	})
-		    	.done(function( msg ) {
-		    		console.log(msg);
-		    	  });
+		$(document).ready(function() {
+			$("#search").click(function() {
+				$.ajax({
+					method : "GET",
+					url : "https://opendart.fss.or.kr/api/company.json",
+					data : {
+						crtfc_key : "05b445d8c91586ba7a5a77367a090d27b9780ab5",
+						corp_code : $("#searchBar").val()
+					}
+				}).done(function(msg) {
+					console.log(msg);
+					$("p").append("<br>"+"ê¸°ì—…ëª…: "+msg.stock_name+"<br>");
+					$("p").append("ëŒ€í‘œ: "+msg.ceo_nm+"<br>");
+                    $("p").append("ì£¼ì†Œ: "+msg.adres+"<br>");
+                    $("p").append("ì „í™”ë²ˆí˜¸: "+msg.phn_no+"<br>");
+				});
+			})
 		})
-	});
-	
- 	function coNumber(var v) {
- 		$.ajax({
-	    	  method: "GET",
-	    	  url: "https://opendart.fss.or.kr/api/corpCode.xml"
-	    	  data: {
-	    		  crtfc_key: "05b445d8c91586ba7a5a77367a090d27b9780ab5"
-	    	  }
-	    	})
-	    	.done(function( msg ) {
-	    		console.log(msg);
-	    	  });
-	}
-		
-	
-</script>
+	</script>
 	<p></p>
 </body>
 </html>
