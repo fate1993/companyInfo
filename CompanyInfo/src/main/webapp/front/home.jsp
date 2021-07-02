@@ -14,10 +14,10 @@
 		crossorigin="anonymous"></script>
 	<nav>
 		<ul>
-			<li><a href="home.html">홈</a></li>
-			<li><a href="intro.html">소개</a></li>
-			<li><a href="howtouse.html">사용법</a></li>
-			<li><a href="list.html">기업목록</a></li>
+			<li><a href="home.jsp">홈</a></li>
+			<li><a href="intro.jsp">소개</a></li>
+			<li><a href="howtouse.jsp">사용법</a></li>
+			<li><a href="list.jsp">기업목록</a></li>
 		</ul>
 	</nav>
 	<div id="logo">
@@ -31,7 +31,7 @@
 	function year() {
 		return new Date().getFullYear() - 1;
 	}
-		$(document).ready(function() {
+		$(function() {
 			$("#search").click(function() {
 				// 기업개황
 				$.ajax({
@@ -93,9 +93,50 @@
 				});
 				
 				// 재무정보
+				$.ajax({
+					method : "GET",
+					url : "https://opendart.fss.or.kr/api/fnlttSinglAcnt.json",
+					data : {
+						crtfc_key : "05b445d8c91586ba7a5a77367a090d27b9780ab5",
+						corp_code : $("#searchBar").val(),
+						bsns_year : "2020", // 연도 최신화 필요
+						reprt_code : "11011" // 최신 보고서 필요
+					}
+				}).done(function(msg) {
+					console.log(msg);
+					$("#finance").append("자산총계(2018): " + msg.list[2].bfefrmtrm_amount + "원<br>");
+					$("#finance").append("부채총계(2018): " + msg.list[5].bfefrmtrm_amount + "원<br>");
+					$("#finance").append("자산총계(2019): " + msg.list[2].frmtrm_amount + "원<br>");
+					$("#finance").append("부채총계(2019): " + msg.list[5].frmtrm_amount + "원<br>");
+					$("#finance").append("자산총계(2020): " + msg.list[2].thstrm_amount + "원<br>");
+					$("#finance").append("부채총계(2020): " + msg.list[5].thstrm_amount + "원<br>");
+					
+					$("#finance").append("자본총계(2018): " + msg.list[8].bfefrmtrm_amount + "원<br>");
+					$("#finance").append("자본총계(2019): " + msg.list[8].bfefrmtrm_amount + "원<br>");
+					$("#finance").append("자본총계(2020): " + msg.list[8].bfefrmtrm_amount + "원<br>");
+					
+					// 매출액
+					$("#finance").append(msg.list[9].account_nm + msg.list[9].bfefrmtrm_dt + msg.list[9].bfefrmtrm_amount + "원<br>");
+					$("#finance").append(msg.list[9].account_nm + msg.list[9].frmtrm_dt + msg.list[9].frmtrm_amount + "원<br>");
+					$("#finance").append(msg.list[9].account_nm + msg.list[9].thstrm_dt + msg.list[9].thstrm_amount + "원<br>");
+					
+					// 영업이익
+					$("#finance").append(msg.list[10].account_nm + msg.list[10].bfefrmtrm_dt + msg.list[10].bfefrmtrm_amount + "원<br>");
+					$("#finance").append(msg.list[10].account_nm + msg.list[10].frmtrm_dt + msg.list[10].frmtrm_amount + "원<br>");
+					$("#finance").append(msg.list[10].account_nm + msg.list[10].thstrm_dt + msg.list[10].thstrm_amount + "원<br>");
+					
+					// 당기순이익
+					$("#finance").append(msg.list[12].account_nm + msg.list[12].bfefrmtrm_dt + msg.list[12].bfefrmtrm_amount + "원<br>");
+					$("#finance").append(msg.list[12].account_nm + msg.list[12].frmtrm_dt + msg.list[12].frmtrm_amount + "원<br>");
+					$("#finance").append(msg.list[12].account_nm + msg.list[12].thstrm_dt + msg.list[12].thstrm_amount + "원<br>");
+					
+					
+					
+				});
 				
-			})
-		})
+				
+			}) // click
+		}) // ready
 		
 	</script>
 	<h1>기업개요</h1>
@@ -107,7 +148,8 @@
 	<h1>최대주주 현황</h1>
 	<p id="shareholders"></p>
 	
-	<h1>직원 현황</h1>
-	<p id="workers"></p>
+	<h1>재무 현황</h1>
+	<p id="finance"></p>
+	
 </body>
 </html>
