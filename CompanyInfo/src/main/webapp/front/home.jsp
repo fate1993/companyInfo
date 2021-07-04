@@ -9,6 +9,10 @@
 <link rel="shortcut icon" href="#">
 </head>
 <body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.0/chart.min.js"></script>
+
+
 	<script src="https://code.jquery.com/jquery-3.6.0.js"
 		integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
 		crossorigin="anonymous"></script>
@@ -70,6 +74,7 @@
 				});
 				
 				// 최대주주 현황
+				
 				$.ajax({
 					method : "GET",
 					url : "https://opendart.fss.or.kr/api/hyslrSttus.json",
@@ -80,8 +85,14 @@
 						reprt_code : "11011" // 최신 보고서 필요
 					}
 				}).done(function(msg) {
-					console.log(msg);
+					var arrayList = [];
+					var shareList = [];
 					for(var i=0; i < msg.list.length; i++) {
+						arrayList.push(msg.list[i].nm);
+						shareList.push(msg.list[i].trmend_posesn_stock_qota_rt);
+						console.log(arrayList);
+						console.log(shareList);
+						
 						$("#shareholders").append("<br>"+"성명: "+ msg.list[i].nm + "<br>");
 						$("#shareholders").append("관계: "+ msg.list[i].relate + "<br>");
 						$("#shareholders").append("주식 종류: "+ msg.list[i].stock_knd + "<br>");
@@ -89,7 +100,31 @@
 						$("#shareholders").append("기초 소유 주식 지분율: "+ msg.list[i].bsis_posesn_stock_qota_rt + "%<br>");
 						$("#shareholders").append("기말 소유 주식수: "+ msg.list[i].trmend_posesn_stock_co + "주<br>");
 						$("#shareholders").append("기말 소유 주식 지분율: "+ msg.list[i].trmend_posesn_stock_qota_rt + "%<br>");
-					}
+						
+						 
+						
+						const data = {
+								  labels: [
+								    '김택진',
+								    '심마로',
+								    '정진수'
+								  ],
+								  datasets: [{
+								    label: 'My First Dataset',
+								    data: [11.97, 0.00, 0.00],
+								    backgroundColor: [
+								      'rgb(255, 99, 132)',
+								      'rgb(54, 162, 235)',
+								      'rgb(255, 205, 86)'
+								    ],
+								    hoverOffset: 4
+								  }]
+								};
+						var myChart = new Chart(
+							    document.getElementById('myChart'),
+							    config
+							  );
+					} // for 반복문
 				});
 				
 				// 재무정보
@@ -129,16 +164,15 @@
 					$("#finance").append(msg.list[12].account_nm + msg.list[12].bfefrmtrm_dt + msg.list[12].bfefrmtrm_amount + "원<br>");
 					$("#finance").append(msg.list[12].account_nm + msg.list[12].frmtrm_dt + msg.list[12].frmtrm_amount + "원<br>");
 					$("#finance").append(msg.list[12].account_nm + msg.list[12].thstrm_dt + msg.list[12].thstrm_amount + "원<br>");
-					
-					
-					
+				
 				});
-				
-				
 			}) // click
 		}) // ready
 		
 	</script>
+	
+
+	
 	<h1>기업개요</h1>
 	<p id="intro"></p>
 	
@@ -147,9 +181,13 @@
 	
 	<h1>최대주주 현황</h1>
 	<p id="shareholders"></p>
-	
+	<div>
+  <canvas id="myChart"></canvas>
+</div>
+
 	<h1>재무 현황</h1>
 	<p id="finance"></p>
+	
 	
 </body>
 </html>
