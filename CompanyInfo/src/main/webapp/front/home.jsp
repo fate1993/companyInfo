@@ -1,9 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
 <title>CompanyInfo</title>
 <link rel="stylesheet" href="style.css">
 <link rel="shortcut icon" href="#">
@@ -37,6 +36,8 @@
 	}
 		$(function() {
 			$("#search").click(function() {
+				$("p").empty();
+
 				// 기업개황
 				$.ajax({
 					method : "GET",
@@ -74,57 +75,46 @@
 				});
 				
 				// 최대주주 현황
-				
 				$.ajax({
 					method : "GET",
 					url : "https://opendart.fss.or.kr/api/hyslrSttus.json",
 					data : {
 						crtfc_key : "05b445d8c91586ba7a5a77367a090d27b9780ab5",
 						corp_code : $("#searchBar").val(),
-						bsns_year : "2020", // 연도 최신화 필요
-						reprt_code : "11011" // 최신 보고서 필요
+						bsns_year : "2021",
+						reprt_code : "11013"
 					}
 				}).done(function(msg) {
 					var arrayList = [];
 					var shareList = [];
+					var numberofShare = [];
 					for(var i=0; i < msg.list.length; i++) {
 						arrayList.push(msg.list[i].nm);
 						shareList.push(msg.list[i].trmend_posesn_stock_qota_rt);
-						console.log(arrayList);
-						console.log(shareList);
-						
-						$("#shareholders").append("<br>"+"성명: "+ msg.list[i].nm + "<br>");
-						$("#shareholders").append("관계: "+ msg.list[i].relate + "<br>");
-						$("#shareholders").append("주식 종류: "+ msg.list[i].stock_knd + "<br>");
-						$("#shareholders").append("기초 소유 주식수: "+ msg.list[i].bsis_posesn_stock_co + "주<br>");
-						$("#shareholders").append("기초 소유 주식 지분율: "+ msg.list[i].bsis_posesn_stock_qota_rt + "%<br>");
-						$("#shareholders").append("기말 소유 주식수: "+ msg.list[i].trmend_posesn_stock_co + "주<br>");
-						$("#shareholders").append("기말 소유 주식 지분율: "+ msg.list[i].trmend_posesn_stock_qota_rt + "%<br>");
-						
-						 
-						
-						const data = {
-								  labels: [
-								    '김택진',
-								    '심마로',
-								    '정진수'
-								  ],
-								  datasets: [{
-								    label: 'My First Dataset',
-								    data: [11.97, 0.00, 0.00],
-								    backgroundColor: [
-								      'rgb(255, 99, 132)',
-								      'rgb(54, 162, 235)',
-								      'rgb(255, 205, 86)'
-								    ],
-								    hoverOffset: 4
-								  }]
-								};
-						var myChart = new Chart(
-							    document.getElementById('myChart'),
-							    config
-							  );
+						numberofShare.push(msg.list[i].trmend_posesn_stock_co);
 					} // for 반복문
+					
+					
+					var ctx = document.getElementById("myChart").getContext('2d');
+					var myChart = new Chart(ctx, {
+						
+					  type: 'pie',
+					  data: {
+					    labels: arrayList,
+					    datasets: [{
+					      backgroundColor: [
+					        "#2ecc71",
+					        "#3498db",
+					        "#95a5a6",
+					        "#9b59b6",
+					        "#f1c40f",
+					        "#e74c3c",
+					        "#34495e"
+					      ],
+					      data: shareList
+					    }]
+					  }
+					}); // 구현필요: 1. 검색시 canvas 삭제후 리로드 2. json 데이터 중 '계' 부분이 이상함 3. 차트 크기 조절
 				});
 				
 				// 재무정보
@@ -139,6 +129,7 @@
 					}
 				}).done(function(msg) {
 					console.log(msg);
+					// 
 					$("#finance").append("자산총계(2018): " + msg.list[2].bfefrmtrm_amount + "원<br>");
 					$("#finance").append("부채총계(2018): " + msg.list[5].bfefrmtrm_amount + "원<br>");
 					$("#finance").append("자산총계(2019): " + msg.list[2].frmtrm_amount + "원<br>");
@@ -150,6 +141,7 @@
 					$("#finance").append("자본총계(2019): " + msg.list[8].bfefrmtrm_amount + "원<br>");
 					$("#finance").append("자본총계(2020): " + msg.list[8].bfefrmtrm_amount + "원<br>");
 					
+					// Combo bar/line
 					// 매출액
 					$("#finance").append(msg.list[9].account_nm + msg.list[9].bfefrmtrm_dt + msg.list[9].bfefrmtrm_amount + "원<br>");
 					$("#finance").append(msg.list[9].account_nm + msg.list[9].frmtrm_dt + msg.list[9].frmtrm_amount + "원<br>");
@@ -179,14 +171,19 @@
 	<h1>배당에 관한 사항</h1>
 	<p id="dividend"></p>
 	
-	<h1>최대주주 현황</h1>
+	
 	<p id="shareholders"></p>
-	<div>
-  <canvas id="myChart"></canvas>
+	<div class="container">
+  <h1>최대주주 현황</h1>
+  <div>
+    <canvas id="myChart"></canvas>
+  </div>
 </div>
 
 	<h1>재무 현황</h1>
 	<p id="finance"></p>
+	
+	<!-- 구현필요: 검색전 p태그hide 시키기 -->
 	
 	
 </body>
