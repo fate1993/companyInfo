@@ -10,7 +10,7 @@
 <body>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.0/chart.min.js"></script>
-
+<script src="https://code.jscharting.com/latest/jscharting.js"></script>
 
 	<script src="https://code.jquery.com/jquery-3.6.0.js"
 		integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
@@ -128,18 +128,51 @@
 						reprt_code : "11011" // 최신 보고서 필요
 					}
 				}).done(function(msg) {
-					console.log(msg);
-					// 
+					$("#finance").append("자산총계(2020): " + msg.list[2].thstrm_amount + "원<br>");
+					$("#finance").append("부채총계(2020): " + msg.list[5].thstrm_amount + "원<br>");
+					$("#finance").append("자본총계(2020): " + msg.list[8].bfefrmtrm_amount + "원<br>");
+					
+					var msg =  int(msg.list[2].thstrm_amount);
+					// 위에꺼 참고해서 다시 해보기 new와 아닌것 차이 남.
+					var chart = JSC.chart('chartDiv', { 
+						  debug: true, 
+						  type: 'treemap cushion', 
+						  title_label_text: 
+						    'Top reps by units in each country', 
+						  legend_visible: false, 
+						  defaultSeries_shape: { 
+						    label: { 
+						      text: '%name', 
+						      color: '#f2f2f2', 
+						      style: { fontSize: 15, fontWeight: 'bold' } 
+						    } 
+						  }, 
+						  series: [ 
+						    { 
+						      name: '자산총계', 
+						      points: [ 
+						        { name: '유동자산', y: msg }, 
+						        { name: '비유동자산', y: 400 }
+						      ] 
+						    }, 
+						    { 
+						      name: '부채총계', 
+						      points: [ 
+						        { name: '유동부채', y: 300 }, 
+						        { name: '비유동부채', y: 200 }
+						      ] 
+						    }
+						  ] 
+						}); 
+			            
+					/*
 					$("#finance").append("자산총계(2018): " + msg.list[2].bfefrmtrm_amount + "원<br>");
 					$("#finance").append("부채총계(2018): " + msg.list[5].bfefrmtrm_amount + "원<br>");
 					$("#finance").append("자산총계(2019): " + msg.list[2].frmtrm_amount + "원<br>");
 					$("#finance").append("부채총계(2019): " + msg.list[5].frmtrm_amount + "원<br>");
-					$("#finance").append("자산총계(2020): " + msg.list[2].thstrm_amount + "원<br>");
-					$("#finance").append("부채총계(2020): " + msg.list[5].thstrm_amount + "원<br>");
-					
 					$("#finance").append("자본총계(2018): " + msg.list[8].bfefrmtrm_amount + "원<br>");
 					$("#finance").append("자본총계(2019): " + msg.list[8].bfefrmtrm_amount + "원<br>");
-					$("#finance").append("자본총계(2020): " + msg.list[8].bfefrmtrm_amount + "원<br>");
+					*/
 					
 					// Combo bar/line
 					// 매출액
@@ -158,6 +191,7 @@
 					$("#finance").append(msg.list[12].account_nm + msg.list[12].thstrm_dt + msg.list[12].thstrm_amount + "원<br>");
 				
 				});
+				
 			}) // click
 		}) // ready
 		
@@ -182,6 +216,8 @@
 
 	<h1>재무 현황</h1>
 	<p id="finance"></p>
+	<div id="chartDiv" style="max-width: 740px;height: 400px;margin: 0px auto">
+    </div>
 	
 	<!-- 구현필요: 검색전 p태그hide 시키기 -->
 	
