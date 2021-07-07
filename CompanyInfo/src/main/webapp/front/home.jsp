@@ -11,6 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.0/chart.min.js"></script>
 <script src="https://code.jscharting.com/latest/jscharting.js"></script>
+<script type="text/javascript" src="https://code.jscharting.com/latest/modules/types.js"></script>
 
 	<script src="https://code.jquery.com/jquery-3.6.0.js"
 		integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
@@ -97,7 +98,6 @@
 					
 					var ctx = document.getElementById("myChart").getContext('2d');
 					var myChart = new Chart(ctx, {
-						
 					  type: 'pie',
 					  data: {
 					    labels: arrayList,
@@ -128,17 +128,24 @@
 						reprt_code : "11011" // 최신 보고서 필요
 					}
 				}).done(function(msg) {
-					$("#finance").append("자산총계(2020): " + msg.list[2].thstrm_amount + "원<br>");
-					$("#finance").append("부채총계(2020): " + msg.list[5].thstrm_amount + "원<br>");
-					$("#finance").append("자본총계(2020): " + msg.list[8].bfefrmtrm_amount + "원<br>");
+					var list = msg.list
 					
-					var msg =  int(msg.list[2].thstrm_amount);
-					// 위에꺼 참고해서 다시 해보기 new와 아닌것 차이 남.
-					var chart = JSC.chart('chartDiv', { 
+					// 유동자산
+					var currentAsset = parseInt(list[0].thstrm_amount.replace(/,/g, ""));
+					// 비유동자산
+					var nonCurrentAsset = parseInt(list[1].thstrm_amount.replace(/,/g, ""));
+					// 유동부채			
+					var currentLiability = parseInt(list[3].thstrm_amount.replace(/,/g, ""));
+					// 비유동부채
+					var nonCurrentLiability = parseInt(list[4].thstrm_amount.replace(/,/g, ""));
+					// 자본총계
+					var totalEquity = parseInt(list[8].thstrm_amount.replace(/,/g, ""));
+					
+					var chart = JSC.chart('chartDiv', {
 						  debug: true, 
 						  type: 'treemap cushion', 
 						  title_label_text: 
-						    'Top reps by units in each country', 
+						    '재무상태표', 
 						  legend_visible: false, 
 						  defaultSeries_shape: { 
 						    label: { 
@@ -149,19 +156,25 @@
 						  }, 
 						  series: [ 
 						    { 
-						      name: '자산총계', 
+						      name: '자산', 
 						      points: [ 
-						        { name: '유동자산', y: msg }, 
-						        { name: '비유동자산', y: 400 }
+						        { name: '유동자산', y: currentAsset }, 
+						        { name: '비유동자산', y: nonCurrentAsset }
 						      ] 
 						    }, 
 						    { 
-						      name: '부채총계', 
+						      name: '부채', 
 						      points: [ 
-						        { name: '유동부채', y: 300 }, 
-						        { name: '비유동부채', y: 200 }
+						        { name: '유동부채', y: currentLiability }, 
+						        { name: '비유동부채', y: nonCurrentLiability }
 						      ] 
-						    }
+						    },
+						    {
+							      name: '자본', 
+							      point: [ 
+							        { name: '자본', y: totalEquity }
+							      ] 
+								 },
 						  ] 
 						}); 
 			            
@@ -175,7 +188,15 @@
 					*/
 					
 					// Combo bar/line
-					// 매출액
+					// 매출액(2018)
+					var revenue2018 = msg.list[9].bfefrmtrm_amount;
+					console.log(revenue2018);
+					// 매출액(2019)
+					var revenue2019 = msg.list[9].frmtrm_amount;
+					// 매출액(2020)
+					var revenue2020 = msg.list[9].thstrm_amount;
+					
+					
 					$("#finance").append(msg.list[9].account_nm + msg.list[9].bfefrmtrm_dt + msg.list[9].bfefrmtrm_amount + "원<br>");
 					$("#finance").append(msg.list[9].account_nm + msg.list[9].frmtrm_dt + msg.list[9].frmtrm_amount + "원<br>");
 					$("#finance").append(msg.list[9].account_nm + msg.list[9].thstrm_dt + msg.list[9].thstrm_amount + "원<br>");
@@ -189,9 +210,7 @@
 					$("#finance").append(msg.list[12].account_nm + msg.list[12].bfefrmtrm_dt + msg.list[12].bfefrmtrm_amount + "원<br>");
 					$("#finance").append(msg.list[12].account_nm + msg.list[12].frmtrm_dt + msg.list[12].frmtrm_amount + "원<br>");
 					$("#finance").append(msg.list[12].account_nm + msg.list[12].thstrm_dt + msg.list[12].thstrm_amount + "원<br>");
-				
 				});
-				
 			}) // click
 		}) // ready
 		
