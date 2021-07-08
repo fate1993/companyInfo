@@ -16,6 +16,7 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.js"
 		integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
 		crossorigin="anonymous"></script>
+		
 	<nav>
 		<ul>
 			<li><a href="home.jsp">홈</a></li>
@@ -160,20 +161,23 @@
 						      points: [ 
 						        { name: '유동자산', y: currentAsset }, 
 						        { name: '비유동자산', y: nonCurrentAsset }
-						      ] 
+						      ],
+						      order: 0
 						    }, 
 						    { 
 						      name: '부채', 
 						      points: [ 
 						        { name: '유동부채', y: currentLiability }, 
 						        { name: '비유동부채', y: nonCurrentLiability }
-						      ] 
+						      ],
+						      order: 1
 						    },
 						    {
 							      name: '자본', 
 							      point: [ 
 							        { name: '자본', y: totalEquity }
-							      ] 
+							      ],
+							      order: 2
 								 },
 						  ] 
 						}); 
@@ -188,28 +192,72 @@
 					*/
 					
 					// Combo bar/line
-					// 매출액(2018)
-					var revenue2018 = msg.list[9].bfefrmtrm_amount;
-					console.log(revenue2018);
-					// 매출액(2019)
-					var revenue2019 = msg.list[9].frmtrm_amount;
-					// 매출액(2020)
-					var revenue2020 = msg.list[9].thstrm_amount;
+					// 매출액(2018-2020)
+					var revenue2018 = parseInt(msg.list[9].bfefrmtrm_amount.replace(/,/g, ""));
+					var revenue2019 = parseInt(msg.list[9].frmtrm_amount.replace(/,/g, ""));
+					var revenue2020 = parseInt(msg.list[9].thstrm_amount.replace(/,/g, ""));
+					// 영업이익(2018-2020)
+					var profit2018 = parseInt(msg.list[10].bfefrmtrm_amount.replace(/,/g, ""));
+					var profit2019 = parseInt(msg.list[10].frmtrm_amount.replace(/,/g, ""));
+					var profit2020 = parseInt(msg.list[10].thstrm_amount.replace(/,/g, ""));
+					// 당기순이익(2018-2020)
+					var net2018 = parseInt(msg.list[12].bfefrmtrm_amount.replace(/,/g, ""));
+					var net2019 = parseInt(msg.list[12].frmtrm_amount.replace(/,/g, ""));
+					var net2020 = parseInt(msg.list[12].thstrm_amount.replace(/,/g, ""));
 					
+					//const DATA_COUNT = 3;
+					//const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
+
+					const labels = [2018,2019,2020];
+					const data = {
+					  labels: labels,
+					  datasets: [
+					    {
+					      label: '매출액',
+					      data: [revenue2018, revenue2019, revenue2020],
+					      borderColor: "none",
+					      backgroundColor: "#ecf0f1",
+					      type: 'bar',
+					      order: 0
+					    },
+					    {
+					      label: '영업이익',
+					      data: [profit2018,profit2019,profit2020],
+					      borderColor: "none",
+					      backgroundColor: "#bdc3c7",
+					      type: 'bar',
+					      order: 1
+					    },
+					    {
+					      label: '당기순이익',
+					      data: [net2018,net2019,net2020],
+					      borderColor: "none",
+					      backgroundColor: "#95a5a6",
+					      type: 'bar',
+					      order: 2
+						    }
+					  ]
+					};
 					
-					$("#finance").append(msg.list[9].account_nm + msg.list[9].bfefrmtrm_dt + msg.list[9].bfefrmtrm_amount + "원<br>");
-					$("#finance").append(msg.list[9].account_nm + msg.list[9].frmtrm_dt + msg.list[9].frmtrm_amount + "원<br>");
-					$("#finance").append(msg.list[9].account_nm + msg.list[9].thstrm_dt + msg.list[9].thstrm_amount + "원<br>");
+					const config = {
+							  type: 'bar',
+							  data: data,
+							  options: {
+							    responsive: true,
+							    plugins: {
+							      legend: {
+							        position: 'top',
+							      },
+							      title: {
+							        display: true,
+							        text: '실적 추이'
+							      }
+							    }
+							  },
+							};
 					
-					// 영업이익
-					$("#finance").append(msg.list[10].account_nm + msg.list[10].bfefrmtrm_dt + msg.list[10].bfefrmtrm_amount + "원<br>");
-					$("#finance").append(msg.list[10].account_nm + msg.list[10].frmtrm_dt + msg.list[10].frmtrm_amount + "원<br>");
-					$("#finance").append(msg.list[10].account_nm + msg.list[10].thstrm_dt + msg.list[10].thstrm_amount + "원<br>");
-					
-					// 당기순이익
-					$("#finance").append(msg.list[12].account_nm + msg.list[12].bfefrmtrm_dt + msg.list[12].bfefrmtrm_amount + "원<br>");
-					$("#finance").append(msg.list[12].account_nm + msg.list[12].frmtrm_dt + msg.list[12].frmtrm_amount + "원<br>");
-					$("#finance").append(msg.list[12].account_nm + msg.list[12].thstrm_dt + msg.list[12].thstrm_amount + "원<br>");
+					var ctx = document.getElementById('myChart2');
+					var myChart = new Chart(ctx, config);
 				});
 			}) // click
 		}) // ready
@@ -237,6 +285,11 @@
 	<p id="finance"></p>
 	<div id="chartDiv" style="max-width: 740px;height: 400px;margin: 0px auto">
     </div>
+    
+    
+    <div>
+    <canvas id="myChart2"></canvas>
+  </div>
 	
 	<!-- 구현필요: 검색전 p태그hide 시키기 -->
 	
