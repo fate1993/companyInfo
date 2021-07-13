@@ -182,14 +182,6 @@
 						  ] 
 						}); 
 			            
-					/*
-					$("#finance").append("자산총계(2018): " + msg.list[2].bfefrmtrm_amount + "원<br>");
-					$("#finance").append("부채총계(2018): " + msg.list[5].bfefrmtrm_amount + "원<br>");
-					$("#finance").append("자산총계(2019): " + msg.list[2].frmtrm_amount + "원<br>");
-					$("#finance").append("부채총계(2019): " + msg.list[5].frmtrm_amount + "원<br>");
-					$("#finance").append("자본총계(2018): " + msg.list[8].bfefrmtrm_amount + "원<br>");
-					$("#finance").append("자본총계(2019): " + msg.list[8].bfefrmtrm_amount + "원<br>");
-					*/
 					
 					// Combo bar/line
 					// 매출액(2018-2020)
@@ -205,8 +197,6 @@
 					var net2019 = parseInt(msg.list[12].frmtrm_amount.replace(/,/g, ""));
 					var net2020 = parseInt(msg.list[12].thstrm_amount.replace(/,/g, ""));
 					
-					//const DATA_COUNT = 3;
-					//const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
 
 					const labels = [2018,2019,2020];
 					const data = {
@@ -264,8 +254,6 @@
 		
 	</script>
 	
-
-	
 	<h1>기업개요</h1>
 	<p id="intro"></p>
 	
@@ -286,13 +274,9 @@
 	<div id="chartDiv" style="max-width: 740px;height: 400px;margin: 0px auto">
     </div>
     
-    
     <div>
     <canvas id="myChart2"></canvas>
-  </div>
-	
-	<!-- 구현필요: 검색전 p태그hide 시키기 -->
-	
+  	</div>
 	
 </body>
 </html>
