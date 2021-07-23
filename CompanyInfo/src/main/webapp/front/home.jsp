@@ -44,61 +44,37 @@
 	var myXML;
 	var key = "05b445d8c91586ba7a5a77367a090d27b9780ab5";
 		$(function() {
-			$("#searchBar").autocomplete({
-	            source : function( request, response ) {
-	                 $.ajax({
-	                        type: 'get',
-	                        url: "/CORPCODE.xml",
-	                        dataType: "xml",
-	                        success: function(data) {
-	                            //서버에서 json 데이터 response 후 목록에 추가
-	                            response(
-	                                $.map(data, function(item) {    //json[i] 번째 에 있는게 item 임.
-	                                    return {
-	                                        label: item.corp_name,    //UI 에서 보여지는 글자, 실제 검색어랑 비교 대상
-	                                        value: item.corp_name,    //그냥 사용자 설정값?
-	                                        test : item+"test"    //이런식으로 사용
-
-	                                        //[
-	                     //    {"name": "하늘이", "dogType": "푸들", "age": 1, "weight": 2.14},
-	                         //    {"name": "콩이", "dogType": "푸들", "age": 3, "weight": 2.5},
-	                         //    {"name": "람이", "dogType": "허스키", "age": 7, "weight": 3.1}
-	                         //]
-	                                        // json이 다음 처럼 넘어오면
-	                                        // 상황 : name으로 찾고 dogType을 넘겨야 하는 상황이면 
-	                                        // label : item.dogType ,    //오토컴플릿이 되고 싶은 단어 
-	                                        // value : item.family ,    //넘겨야 하는 단어
-	                                        // age : item.age ,
-	                                        // weight : item.weight
-	                                    }
-	                                })
-	                            );
-	                        }
-	                   });
-	                },    // source 는 자동 완성 대상
-	            select : function(event, ui) {    //아이템 선택시
-	                console.log(ui);//사용자가 오토컴플릿이 만들어준 목록에서 선택을 하면 반환되는 객체
-	                console.log(ui.item.label);    //김치 볶음밥label
-	                console.log(ui.item.value);    //김치 볶음밥
-	                console.log(ui.item.test);    //김치 볶음밥test
-	                
-	            },
-	            focus : function(event, ui) {    //포커스 가면
-	                return false;//한글 에러 잡기용도로 사용됨
-	            },
-	            minLength: 1,// 최소 글자수
-	            autoFocus: true, //첫번째 항목 자동 포커스 기본값 false
-	            classes: {    //잘 모르겠음
-	                "ui-autocomplete": "highlight"
-	            },
-	            delay: 500,    //검색창에 글자 써지고 나서 autocomplete 창 뜰 때 까지 딜레이 시간(ms)
-//	            disabled: true, //자동완성 기능 끄기
-	            position: { my : "right top", at: "right bottom" },    //잘 모르겠음
-	            close : function(event){    //자동완성창 닫아질때 호출
-	                console.log(event);
-	            }
-	        });
-			//
+	            	var myArr = [];
+	            	 $.ajax({
+	            	   type: "GET",
+	            	   url: "CORPCODE.xml",
+	            	   dataType: "xml",
+	            	   success: parseXml,
+	            	   complete: setupAC,
+	            	   failure: function(data) {
+	            	     alert("XML File could not be found");
+	            	   }
+	            	 });
+	            	 
+	            	 function parseXml(xml)
+	            	 {
+	            	   $(xml).find("corp_name").each(function()
+	            	   {
+	            	     myArr.push($(this).text());
+	            	   });
+	            	 }
+	            	 
+	            	 function setupAC() {
+	            	   $("input#searchBar").autocomplete({
+	            	   source: myArr,
+	            	   minLength: 1,
+	            	   select: function(event, ui) {
+	            		   $("input#searchBar").val(ui.item.value);
+	            	     //$("input#searchBar").val(ui.item.value);
+	            	   }
+	            	  });
+	            	 }
+			// 클릭 이벤트 시작
 			$("#search").click(function() {
 				$("p").empty();
 				var Value = $("#searchBar").val()
@@ -120,8 +96,7 @@
 							url : "https://opendart.fss.or.kr/api/company.json",
 							data : {
 								crtfc_key : key,
-								corp_code : corp_code
-									//$("#searchBar").val()
+								corp_code : corp_code //$("#searchBar").val()
 							}
 						}).done(function(msg) {
 							console.log(msg);
