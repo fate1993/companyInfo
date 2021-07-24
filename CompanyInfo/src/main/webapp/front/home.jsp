@@ -4,7 +4,7 @@
 <html>
 <head>
 <title>CompanyInfo</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=1">
 <link rel="shortcut icon" href="#">
 </head>
 <body>
@@ -13,30 +13,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.0/chart.min.js"></script>
 <script src="https://code.jscharting.com/latest/jscharting.js"></script>
 <script type="text/javascript" src="https://code.jscharting.com/latest/modules/types.js"></script>
-
-<!-- jquery -->
-	<script src="https://code.jquery.com/jquery-3.6.0.js"
-		integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-		crossorigin="anonymous"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-		
-	<nav>
-		<ul>
-			<li><a href="home.jsp">홈</a></li>
-			<li><a href="intro.jsp">소개</a></li>
-			<li><a href="howtouse.jsp">사용법</a></li>
-			<li><a href="list.jsp">기업목록</a></li>
-		</ul>
-	</nav>
-	<div id="logo" >
-		<img src="logo.png">
-	</div>
-	<div id="test">
-		<input id="searchBar" value="" type="text">
-		<button id="search">검색</button>
-	</div>
-	<script>
-	function year() {
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.js"
+	integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+	crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+			function year() {
 		return new Date().getFullYear() - 1;
 	}
 	
@@ -50,10 +33,10 @@
 	            	   url: "CORPCODE.xml",
 	            	   dataType: "xml",
 	            	   success: parseXml,
-	            	   complete: setupAC,
-	            	   failure: function(data) {
+	            	   complete: setup,
+	            	   /*failure: function(data) {
 	            	     alert("XML File could not be found");
-	            	   }
+	            	   }*/
 	            	 });
 	            	 
 	            	 function parseXml(xml)
@@ -64,21 +47,22 @@
 	            	   });
 	            	 }
 	            	 
-	            	 function setupAC() {
+	            	 function setup() {
 	            	   $("input#searchBar").autocomplete({
 	            	   source: myArr,
 	            	   minLength: 1,
 	            	   select: function(event, ui) {
 	            		   $("input#searchBar").val(ui.item.value);
-	            	     //$("input#searchBar").val(ui.item.value);
 	            	   }
 	            	  });
 	            	 }
-			// 클릭 이벤트 시작
+			// click event
 			$("#search").click(function() {
 				$("p").empty();
+				$(".list").show();
 				var Value = $("#searchBar").val()
 				
+				// XML 파일의 corp_name 입력시 corp_code 꺼내오기
 				$.ajax({
 					url: "./CORPCODE.xml",						
 					type: "get",
@@ -86,9 +70,7 @@
 						myXML = $(xml).find("list").filter(function() {
 			                return $(this).find('corp_name').text() == Value;
 			            });
-						console.log(myXML);
 						corp_code = myXML[0].childNodes[1].innerHTML;
-						console.log(corp_code);
 							
 						// 기업개황
 						$.ajax({
@@ -100,7 +82,6 @@
 							}
 						}).done(function(msg) {
 							console.log(msg);
-							$("#intro").append("<br>"+"결산월: "+year()+"년 "+msg.acc_mt+"월<br>");
 							$("#intro").append("기업명: "+msg.stock_name+"<br>");
 							$("#intro").append("설립일: "+msg.est_dt+"<br>"); // 설립일 yyyy/mm/mm 형태로 변경 필요
 							$("#intro").append("대표: "+msg.ceo_nm+"<br>");
@@ -116,16 +97,16 @@
 								crtfc_key : key,
 								corp_code : corp_code,
 								bsns_year : "2020", // 연도 자동 최신화 필요
-								// if문으로 2020 자료 없을시 2019로 대체 jsp니까 자바 사용 %% 가능할듯
-								reprt_code : "11011" // 최신 보고서 필요
+								reprt_code : "11011"
 							}
 						}).done(function(msg) {
 							console.log(msg);
-							$("#dividend").append("<br>"+"보통주 배당수익률: "+ msg.list[7].thstrm + "%<br>");
+							$("#dividend").append("보통주 배당수익률: "+ msg.list[7].thstrm + "%<br>");
 							$("#dividend").append("보통주 현금배당금: "+ msg.list[11].thstrm + "원<br>");
 							$("#dividend").append("우선주 배당수익률: "+ msg.list[8].thstrm + "%<br>");
 							$("#dividend").append("우선주 현금배당금: "+ msg.list[12].thstrm + "원<br>");
 						});
+						
 						// 최대주주 현황
 						$.ajax({
 							method : "GET",
@@ -133,11 +114,10 @@
 							data : {
 								crtfc_key : key,
 								corp_code : corp_code,
-								bsns_year : "2021",
+								bsns_year : "2021", // 연도 자동 최신화 필요
 								reprt_code : "11013"
 							}
 						}).done(function(msg) {
-							console.log(msg);
 							var arrayList = [];
 							var shareList = [];
 							var numberofShare = [];
@@ -145,14 +125,14 @@
 								arrayList.push(msg.list[i].nm);
 								shareList.push(msg.list[i].trmend_posesn_stock_qota_rt);
 								numberofShare.push(msg.list[i].trmend_posesn_stock_co);
-							} // for 반복문
-							
+							}
 							
 							var ctx = document.getElementById("myChart").getContext('2d');
 							var myChart = new Chart(ctx, {
 							  type: 'pie',
 							  data: {
 							    labels: arrayList,
+							    maintainAspectRatio: false,
 							    datasets: [{
 							      backgroundColor: [
 							        "#2ecc71",
@@ -248,6 +228,18 @@
 							var net2019 = parseInt(msg.list[12].frmtrm_amount.replace(/,/g, ""));
 							var net2020 = parseInt(msg.list[12].thstrm_amount.replace(/,/g, ""));
 							
+							$("#revenue2018").html(revenue2018);
+							$("#revenue2019").html(revenue2019);
+							$("#revenue2020").html(revenue2020);
+							
+							$("#profit2018").html(profit2018);
+							$("#profit2019").html(profit2019);
+							$("#profit2020").html(profit2020);
+							
+							$("#net2018").html(net2018);
+							$("#net2019").html(net2019);
+							$("#net2020").html(net2020);
+							
 
 							const labels = [2018,2019,2020];
 							const data = {
@@ -306,41 +298,79 @@
 					}
 				
 				});
-
-				
-				
-				
-				
-				
 				
 			}) // click
 		}) // ready
+		</script>	
 		
-	</script>
+	<nav>
+		<ul>
+			<li><a href="home.jsp">홈</a></li>
+			<li><a href="intro.jsp">소개</a></li>
+			<li><a href="howtouse.jsp">사용법</a></li>
+		</ul>
+	</nav>
+	<div id="logo" >
+		<img src="logo.png">
+	</div>
+	<div id="test">
+		<input id="searchBar" value="" type="text">
+		<button id="search">검색</button>
+	</div>
 	
-	<h1>기업개요</h1>
-	<p id="intro"></p>
+	<h1 class="list" style="margin-left: 30px; display: none;">기업개요</h1>
+	<p id="intro" style="margin: 30px 0 30px 30px;"></p>
 	
-	<h1>배당에 관한 사항</h1>
-	<p id="dividend"></p>
-	
+	<h1 class="list" style="display: none; margin-left: 30px;">배당에 관한 사항</h1>
+	<p id="dividend" style="margin: 30px 0 30px 30px;" ></p>
 	
 	<p id="shareholders"></p>
-	<div class="container">
-  <h1>최대주주 현황</h1>
-  <div>
+	
+<div class="container">
+  <h1 class="list" style="display: none; margin: 30px 0 30px 30px;">최대주주 현황</h1>
+  
+  <div class="chart-container" style="position: relative; margin: auto; height:20vh; width:40vw">
     <canvas id="myChart"></canvas>
   </div>
 </div>
-
-	<h1>재무 현황</h1>
-	<p id="finance"></p>
-	<div id="chartDiv" style="max-width: 740px;height: 400px;margin: 0px auto">
+	<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+	<h1 class="list" style="display: none; margin: 30px 0 30px 30px;">재무 현황</h1>
+	<!-- <p id="finance"></p> -->
+	
+	<div id="chartDiv" style="position: relative; max-width: 740px;height: 400px;margin: 0px auto">
     </div>
-    
-    <div>
+    <div style="position: relative; margin: auto; height:20vh; width:40vw">
     <canvas id="myChart2"></canvas>
   	</div>
+  	<br><br><br><br><br><br><br><br>
+  	<table>
+  	<tbody>
+        <tr>
+        	<td></td>
+            <td>2018.12</td>
+            <td>2019.12</td>
+            <td>2020.12</td>
+        </tr>
+        <tr >
+        	<td>매출액</td>
+        	<td id="revenue2018"></td>
+        	<td id="revenue2019"></td>
+        	<td id="revenue2020"></td>
+        </tr>
+        <tr>
+			<td>영업이익</td>
+			<td id="profit2018"></td>
+			<td id="profit2019"></td>
+			<td id="profit2020"></td>
+        </tr>
+        <tr>
+	        <td>당기순이익</td>
+	        <td id="net2018"></td>
+	        <td id="net2019"></td>
+	        <td id="net2020"></td>
+        </tr>
+        </tbody>
+  	</table>
 	
 </body>
 </html>

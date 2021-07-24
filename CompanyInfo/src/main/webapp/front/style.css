@@ -65,19 +65,26 @@ li a:hover {
 	background-color: gray;
 }
 
-/*기업정보 테이블*/
 table {
-	width: 100%;
+	width: 740px;
+    height: 400px;
 	text-align: center;
-	border: 1px solid gray;
 	border-collapse: collapse;
-	margin-top: 50px;
+	border-top: 1px solid #444444;
+	margin: auto;
 }
+
+td {
+ 	border-bottom: 1px solid #444444;
+    padding: 10px;
+  }
 
 #pie-chart {
 	width: 300px;
 	height: 400px;
 }
+
+
 /* autocomplete css / 적용 안되고 있음*/
 .ui-autocomplete {
   position: absolute;
