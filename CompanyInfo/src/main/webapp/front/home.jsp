@@ -5,30 +5,16 @@
 <head>
 <title>CompanyInfo</title>
 <link rel="stylesheet" href="style.css">
-<link rel="shortcut icon" href="#">
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 <body>
 <!-- chart -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.0/chart.min.js"></script>
-<script src="https://code.jscharting.com/latest/jscharting.js"></script>
-<script type="text/javascript" src="https://code.jscharting.com/latest/modules/types.js"></script>
 <!-- jQuery -->
-<!-- 
-<script src="https://code.jquery.com/jquery-3.6.0.js"
-	integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-	crossorigin="anonymous"></script>
-	 -->
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-
 <script>
-			function year() {
-		return new Date().getFullYear() - 1;
-	}
-	
 	var corp_code = "";
 	var myXML;
 	var key = "05b445d8c91586ba7a5a77367a090d27b9780ab5";
@@ -66,8 +52,8 @@
 	            	  });
 	            	 }
 			
-			 $('#searchBar').keypress(function(e){
-            $('#search').click();
+			$('#searchBar').keypress(function(e){
+            	$('#search').click();
     		});
 			
 			$("#search").click(function() {
@@ -95,7 +81,7 @@
 						}).done(function(msg) {
 							$(".list").show();
 							$("#intro").append("기업명: "+msg.stock_name+"<br>");
-							$("#intro").append("설립일: "+msg.est_dt+"<br>"); // 설립일 yyyy/mm/mm 형태로 변경 필요
+							$("#intro").append("설립일: "+(msg.est_dt).replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')+"<br>"); // 설립일 yyyy/mm/mm 형태로 변경 필요
 							$("#intro").append("대표: "+msg.ceo_nm+"<br>");
 		                    $("#intro").append("주소: "+msg.adres+"<br>");
 		                    $("#intro").append("홈페이지: "+msg.hm_url+"<br>");
@@ -108,7 +94,7 @@
 							data : {
 								crtfc_key : key,
 								corp_code : corp_code,
-								bsns_year : "2020", // 연도 자동 최신화 필요
+								bsns_year : "2020",
 								reprt_code : "11011"
 							}
 						}).done(function(msg) {
@@ -125,7 +111,7 @@
 							data : {
 								crtfc_key : key,
 								corp_code : corp_code,
-								bsns_year : "2021", // 연도 자동 최신화 필요
+								bsns_year : "2021",
 								reprt_code : "11013"
 							}
 						}).done(function(msg) {
@@ -157,7 +143,7 @@
 							      data: shareList
 							    }]
 							  }
-							}); // 구현필요: 1. 검색시 canvas 삭제후 리로드 2. json 데이터 중 '계' 부분이 이상함 3. 차트 크기 조절
+							});
 						});
 						
 						// 재무정보
@@ -167,27 +153,16 @@
 							data : {
 								crtfc_key : key,
 								corp_code : corp_code,
-								bsns_year : "2020", // 연도 최신화 필요
-								reprt_code : "11011" // 최신 보고서 필요
+								bsns_year : "2020", 
+								reprt_code : "11011"
 							}
 						}).done(function(msg) {
 							var list = msg.list
-							/*
-							// 유동자산
-							var currentAsset = parseInt(list[0].thstrm_amount.replace(/,/g, ""));
-							// 비유동자산
-							var nonCurrentAsset = parseInt(list[1].thstrm_amount.replace(/,/g, ""));
-							// 유동부채			
-							var currentLiability = parseInt(list[3].thstrm_amount.replace(/,/g, ""));
-							// 비유동부채
-							var nonCurrentLiability = parseInt(list[4].thstrm_amount.replace(/,/g, ""));
-							*/
 							
 							//자산총계
 							var totalAssets2020 = parseInt(list[2].thstrm_amount.replace(/,/g, ""));
 							var totalAssets2019 = parseInt(list[2].frmtrm_amount.replace(/,/g, ""));
 							var totalAssets2018 = parseInt(list[2].bfefrmtrm_amount.replace(/,/g, ""));
-							
 							//부채총계
 							var totalLiabilities2020 = parseInt(list[5].thstrm_amount.replace(/,/g, ""));
 							var totalLiabilities2019 = parseInt(list[5].frmtrm_amount.replace(/,/g, ""));
@@ -197,6 +172,7 @@
 							var totalEquity2019 = parseInt(list[8].frmtrm_amount.replace(/,/g, ""));
 							var totalEquity2018 = parseInt(list[8].bfefrmtrm_amount.replace(/,/g, ""));
 							
+							// 재무상태표 테이블 표
 							$("#totalAssets2018").html((String)(totalAssets2018).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							$("#totalAssets2019").html((String)(totalAssets2019).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							$("#totalAssets2020").html((String)(totalAssets2020).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
@@ -209,6 +185,7 @@
 							$("#totalEquity2019").html((String)(totalEquity2019).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							$("#totalEquity2020").html((String)(totalEquity2020).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							
+							// 재무상태표 그래프
 							const labels1 = [2018,2019,2020];
 							const data = {
 							  labels: labels1,
@@ -276,11 +253,10 @@
 							var net2019 = parseInt(msg.list[12].frmtrm_amount.replace(/,/g, ""));
 							var net2020 = parseInt(msg.list[12].thstrm_amount.replace(/,/g, ""));
 							
-							
+							// 실적 테이블 표
 							$("#revenue2018").html((String)(revenue2018).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							$("#revenue2019").html((String)(revenue2019).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							$("#revenue2020").html((String)(revenue2020).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-							
 							
 							$("#profit2018").html((String)(profit2018).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							$("#profit2019").html((String)(profit2019).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
@@ -290,7 +266,7 @@
 							$("#net2019").html((String)(net2019).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							$("#net2020").html((String)(net2020).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							
-
+							// 실적 그래프
 							const labels = [2018,2019,2020];
 							const data2 = {
 							  labels: labels,
@@ -368,6 +344,7 @@
 		<input id="searchBar" value="" type="text" placeholder="종목명을 입력하세요">
 		<button id="search">검색</button>
 	</div>
+	
 	<!-- 본문 -->
 	<br><br>
 	<p class="list" style="display: none; border-bottom: 1px solid gray;"></p>
@@ -378,8 +355,6 @@
 	
 	<h1 class="list" style="display: none; margin: 30px 0 30px 30px; text-align: center;">배당 현황</h1>
 	<p id="dividend" style="margin: 30px 0 30px 30px; text-align: center;"></p>
-	
-	<!-- <p id="shareholders"></p> -->
 	
 	<p class="list" style="display: none; border-bottom: 1px solid gray;"></p>
 	
@@ -431,7 +406,6 @@
         </tbody>
   	</table>
   	<br><br><br><br>
-  	
      
     <div style="position: relative; margin: auto; height:20vh; width:40vw">
     <canvas id="myChart2"></canvas>
@@ -465,6 +439,5 @@
         </tr>
         </tbody>
   	</table>
-	
 </body>
 </html>

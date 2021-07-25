@@ -85,7 +85,7 @@ td {
 }
 
 
-/* autocomplete css / 적용 안되고 있음*/
+/* autocomplete css */
 .ui-autocomplete {
   position: absolute;
   top: 100%;
