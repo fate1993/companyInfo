@@ -4,8 +4,9 @@
 <html>
 <head>
 <title>CompanyInfo</title>
-<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="style.css">
 <link rel="shortcut icon" href="#">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 <body>
 <!-- chart -->
@@ -14,10 +15,15 @@
 <script src="https://code.jscharting.com/latest/jscharting.js"></script>
 <script type="text/javascript" src="https://code.jscharting.com/latest/modules/types.js"></script>
 <!-- jQuery -->
+<!-- 
 <script src="https://code.jquery.com/jquery-3.6.0.js"
 	integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
 	crossorigin="anonymous"></script>
+	 -->
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
 <script>
 			function year() {
 		return new Date().getFullYear() - 1;
@@ -34,9 +40,9 @@
 	            	   dataType: "xml",
 	            	   success: parseXml,
 	            	   complete: setup,
-	            	   /*failure: function(data) {
+	            	   failure: function(data) {
 	            	     alert("XML File could not be found");
-	            	   }*/
+	            	   }
 	            	 });
 	            	 
 	            	 function parseXml(xml)
@@ -48,18 +54,24 @@
 	            	 }
 	            	 
 	            	 function setup() {
-	            	   $("input#searchBar").autocomplete({
+	            	   $("#searchBar").autocomplete({
 	            	   source: myArr,
 	            	   minLength: 1,
 	            	   select: function(event, ui) {
-	            		   $("input#searchBar").val(ui.item.value);
-	            	   }
+	            		   $(this).val(ui.item.value);
+	            	   },
+	            	   focus : function(event, ui) {
+	                       return false;
+	                   }
 	            	  });
 	            	 }
-			// click event
+			
+			 $('#searchBar').keypress(function(e){
+            $('#search').click();
+    		});
+			
 			$("#search").click(function() {
 				$("p").empty();
-				$(".list").show();
 				var Value = $("#searchBar").val()
 				
 				// XML 파일의 corp_name 입력시 corp_code 꺼내오기
@@ -81,7 +93,7 @@
 								corp_code : corp_code //$("#searchBar").val()
 							}
 						}).done(function(msg) {
-							console.log(msg);
+							$(".list").show();
 							$("#intro").append("기업명: "+msg.stock_name+"<br>");
 							$("#intro").append("설립일: "+msg.est_dt+"<br>"); // 설립일 yyyy/mm/mm 형태로 변경 필요
 							$("#intro").append("대표: "+msg.ceo_nm+"<br>");
@@ -100,7 +112,6 @@
 								reprt_code : "11011"
 							}
 						}).done(function(msg) {
-							console.log(msg);
 							$("#dividend").append("보통주 배당수익률: "+ msg.list[7].thstrm + "%<br>");
 							$("#dividend").append("보통주 현금배당금: "+ msg.list[11].thstrm + "원<br>");
 							$("#dividend").append("우선주 배당수익률: "+ msg.list[8].thstrm + "%<br>");
@@ -161,7 +172,7 @@
 							}
 						}).done(function(msg) {
 							var list = msg.list
-							
+							/*
 							// 유동자산
 							var currentAsset = parseInt(list[0].thstrm_amount.replace(/,/g, ""));
 							// 비유동자산
@@ -170,51 +181,88 @@
 							var currentLiability = parseInt(list[3].thstrm_amount.replace(/,/g, ""));
 							// 비유동부채
 							var nonCurrentLiability = parseInt(list[4].thstrm_amount.replace(/,/g, ""));
+							*/
+							
+							//자산총계
+							var totalAssets2020 = parseInt(list[2].thstrm_amount.replace(/,/g, ""));
+							var totalAssets2019 = parseInt(list[2].frmtrm_amount.replace(/,/g, ""));
+							var totalAssets2018 = parseInt(list[2].bfefrmtrm_amount.replace(/,/g, ""));
+							
+							//부채총계
+							var totalLiabilities2020 = parseInt(list[5].thstrm_amount.replace(/,/g, ""));
+							var totalLiabilities2019 = parseInt(list[5].frmtrm_amount.replace(/,/g, ""));
+							var totalLiabilities2018 = parseInt(list[5].bfefrmtrm_amount.replace(/,/g, ""));
 							// 자본총계
-							var totalEquity = parseInt(list[8].thstrm_amount.replace(/,/g, ""));
+							var totalEquity2020 = parseInt(list[8].thstrm_amount.replace(/,/g, ""));
+							var totalEquity2019 = parseInt(list[8].frmtrm_amount.replace(/,/g, ""));
+							var totalEquity2018 = parseInt(list[8].bfefrmtrm_amount.replace(/,/g, ""));
 							
-							var chart = JSC.chart('chartDiv', {
-								  debug: true, 
-								  type: 'treemap cushion', 
-								  title_label_text: 
-								    '재무상태표', 
-								  legend_visible: false, 
-								  defaultSeries_shape: { 
-								    label: { 
-								      text: '%name', 
-								      color: '#f2f2f2', 
-								      style: { fontSize: 15, fontWeight: 'bold' } 
-								    } 
-								  }, 
-								  series: [ 
-								    { 
-								      name: '자산', 
-								      points: [ 
-								        { name: '유동자산', y: currentAsset }, 
-								        { name: '비유동자산', y: nonCurrentAsset }
-								      ],
-								      order: 0
-								    }, 
-								    { 
-								      name: '부채', 
-								      points: [ 
-								        { name: '유동부채', y: currentLiability }, 
-								        { name: '비유동부채', y: nonCurrentLiability }
-								      ],
-								      order: 1
-								    },
-								    {
-									      name: '자본', 
-									      point: [ 
-									        { name: '자본', y: totalEquity }
-									      ],
-									      order: 2
-										 },
-								  ] 
-								}); 
-					            
+							$("#totalAssets2018").html((String)(totalAssets2018).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							$("#totalAssets2019").html((String)(totalAssets2019).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							$("#totalAssets2020").html((String)(totalAssets2020).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							
-							// Combo bar/line
+							$("#totalLiabilities2018").html((String)(totalLiabilities2018).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							$("#totalLiabilities2019").html((String)(totalLiabilities2019).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							$("#totalLiabilities2020").html((String)(totalLiabilities2020).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							
+							$("#totalEquity2018").html((String)(totalEquity2018).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							$("#totalEquity2019").html((String)(totalEquity2019).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							$("#totalEquity2020").html((String)(totalEquity2020).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							
+							const labels1 = [2018,2019,2020];
+							const data = {
+							  labels: labels1,
+							  datasets: [
+							    {
+							      label: '자산총계',
+							      data: [totalAssets2018, totalAssets2019, totalAssets2020],
+							      borderColor: "none",
+							      backgroundColor: "#ecf0f1",
+							      type: 'bar',
+							      order: 0
+							    },
+							    {
+							      label: '부채총계',
+							      data: [totalLiabilities2018, totalLiabilities2019, totalLiabilities2020],
+							      borderColor: "none",
+							      backgroundColor: "#bdc3c7",
+							      type: 'bar',
+							      order: 1
+							    },
+							    {
+							      label: '자본총계',
+							      data: [totalEquity2018, totalEquity2019, totalEquity2018],
+							      borderColor: "none",
+							      backgroundColor: "#95a5a6",
+							      type: 'bar',
+							      order: 2
+								    }
+							  ]
+							};
+							
+							const config = {
+									  type: 'bar',
+									  data: data,
+									  options: {
+									    responsive: true,
+									    plugins: {
+									      legend: {
+									        position: 'top',
+									      },
+									      title: {
+									        display: true,
+									        font: {
+									        	size: 20
+									        },
+									        text: '재무상태표(단위: 원)'
+									      }
+									    }
+									  },
+									};
+							
+							var ctx = document.getElementById('myChart3');
+							var myChart = new Chart(ctx, config);
+							
 							// 매출액(2018-2020)
 							var revenue2018 = parseInt(msg.list[9].bfefrmtrm_amount.replace(/,/g, ""));
 							var revenue2019 = parseInt(msg.list[9].frmtrm_amount.replace(/,/g, ""));
@@ -228,21 +276,23 @@
 							var net2019 = parseInt(msg.list[12].frmtrm_amount.replace(/,/g, ""));
 							var net2020 = parseInt(msg.list[12].thstrm_amount.replace(/,/g, ""));
 							
-							$("#revenue2018").html(revenue2018);
-							$("#revenue2019").html(revenue2019);
-							$("#revenue2020").html(revenue2020);
 							
-							$("#profit2018").html(profit2018);
-							$("#profit2019").html(profit2019);
-							$("#profit2020").html(profit2020);
+							$("#revenue2018").html((String)(revenue2018).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							$("#revenue2019").html((String)(revenue2019).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							$("#revenue2020").html((String)(revenue2020).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							
-							$("#net2018").html(net2018);
-							$("#net2019").html(net2019);
-							$("#net2020").html(net2020);
+							
+							$("#profit2018").html((String)(profit2018).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							$("#profit2019").html((String)(profit2019).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							$("#profit2020").html((String)(profit2020).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							
+							$("#net2018").html((String)(net2018).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							$("#net2019").html((String)(net2019).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+							$("#net2020").html((String)(net2020).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							
 
 							const labels = [2018,2019,2020];
-							const data = {
+							const data2 = {
 							  labels: labels,
 							  datasets: [
 							    {
@@ -272,9 +322,9 @@
 							  ]
 							};
 							
-							const config = {
+							const config2 = {
 									  type: 'bar',
-									  data: data,
+									  data: data2,
 									  options: {
 									    responsive: true,
 									    plugins: {
@@ -283,67 +333,111 @@
 									      },
 									      title: {
 									        display: true,
-									        text: '실적 추이'
+									        font: {
+									        	size: 20
+									        },
+									        text: '실적 추이(단위: 원)'
 									      }
 									    }
 									  },
 									};
 							
 							var ctx = document.getElementById('myChart2');
-							var myChart = new Chart(ctx, config);
+							var myChart = new Chart(ctx, config2);
 						});
 					},
 					error: function(xhr, textStatus, errorThrown) {
 						$("div").html("<div>" + textStatus + " (HTTP-" + xhr.status + " / " + errorThrown + ")</div>" );
 					}
-				
 				});
-				
 			}) // click
 		}) // ready
 		</script>	
 		
+	<!-- 홈 UI -->
 	<nav>
 		<ul>
 			<li><a href="home.jsp">홈</a></li>
-			<li><a href="intro.jsp">소개</a></li>
-			<li><a href="howtouse.jsp">사용법</a></li>
+			<li><a href="intro.jsp">사이트 소개</a></li>
 		</ul>
 	</nav>
 	<div id="logo" >
 		<img src="logo.png">
 	</div>
 	<div id="test">
-		<input id="searchBar" value="" type="text">
+		<input id="searchBar" value="" type="text" placeholder="종목명을 입력하세요">
 		<button id="search">검색</button>
 	</div>
+	<!-- 본문 -->
+	<br><br>
+	<p class="list" style="display: none; border-bottom: 1px solid gray;"></p>
+	<h1 class="list" style="margin: 30px 0 30px 30px; display: none; text-align: center;">기업개요</h1>
+	<p id="intro" style="margin: 30px 0 30px 30px; text-align: center;"></p>
 	
-	<h1 class="list" style="margin-left: 30px; display: none;">기업개요</h1>
-	<p id="intro" style="margin: 30px 0 30px 30px;"></p>
+	<p class="list" style="display: none; border-bottom: 1px solid gray;"></p>
 	
-	<h1 class="list" style="display: none; margin-left: 30px;">배당에 관한 사항</h1>
-	<p id="dividend" style="margin: 30px 0 30px 30px;" ></p>
+	<h1 class="list" style="display: none; margin: 30px 0 30px 30px; text-align: center;">배당 현황</h1>
+	<p id="dividend" style="margin: 30px 0 30px 30px; text-align: center;"></p>
 	
-	<p id="shareholders"></p>
+	<!-- <p id="shareholders"></p> -->
 	
-<div class="container">
-  <h1 class="list" style="display: none; margin: 30px 0 30px 30px;">최대주주 현황</h1>
+	<p class="list" style="display: none; border-bottom: 1px solid gray;"></p>
+	
+  <h1 class="list" style="display: none; margin: 30px 0 30px 30px; text-align: center;">최대주주 현황</h1>
   
-  <div class="chart-container" style="position: relative; margin: auto; height:20vh; width:40vw">
+ <div class="chart-container" style="position: relative; margin: auto; height:20vh; width:40vw">
     <canvas id="myChart"></canvas>
-  </div>
 </div>
-	<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-	<h1 class="list" style="display: none; margin: 30px 0 30px 30px;">재무 현황</h1>
+	
+	<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+	<p class="list" style="display: none; border-bottom: 1px solid gray;"></p>
+	<h1 class="list" style="display: none; margin: 30px 0 30px 30px; text-align: center;">재무 현황</h1>
 	<!-- <p id="finance"></p> -->
 	
+	<!-- 
 	<div id="chartDiv" style="position: relative; max-width: 740px;height: 400px;margin: 0px auto">
     </div>
+     -->
+     <div style="position: relative; margin: auto; height:20vh; width:40vw">
+    <canvas id="myChart3"></canvas>
+  	</div>
+  	<br><br><br><br><br><br><br><br><br><br><br>
+     <table class="list" style="display:none;">
+  	<tbody>
+        <tr>
+        	<td></td>
+            <td>2018.12</td>
+            <td>2019.12</td>
+            <td>2020.12</td>
+        </tr>
+        <tr >
+        	<td>자산총계</td>
+        	<td id="totalAssets2018"></td>
+        	<td id="totalAssets2019"></td>
+        	<td id="totalAssets2020"></td>
+        </tr>
+        <tr>
+			<td>부채총계</td>
+			<td id="totalLiabilities2018"></td>
+			<td id="totalLiabilities2019"></td>
+			<td id="totalLiabilities2020"></td>
+        </tr>
+        <tr>
+	        <td>자본총계</td>
+	        <td id="totalEquity2018"></td>
+	        <td id="totalEquity2019"></td>
+	        <td id="totalEquity2020"></td>
+        </tr>
+        </tbody>
+  	</table>
+  	<br><br><br><br>
+  	
+     
     <div style="position: relative; margin: auto; height:20vh; width:40vw">
     <canvas id="myChart2"></canvas>
   	</div>
-  	<br><br><br><br><br><br><br><br>
-  	<table>
+  	<br><br><br><br><br><br><br><br><br><br><br>
+  	<table class="list" style="display:none;">
   	<tbody>
         <tr>
         	<td></td>
