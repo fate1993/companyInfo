@@ -15,11 +15,11 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <script>
-	var corp_code = "";
-	var myXML;
-	var key = "05b445d8c91586ba7a5a77367a090d27b9780ab5";
+	let corp_code = "";
+	let myXML;
+	let key = "API KEY"; // 발급받은 api 키
 		$(function() {
-	            	var myArr = [];
+	            	let myArr = [];
 	            	 $.ajax({
 	            	   type: "GET",
 	            	   url: "CORPCODE.xml",
@@ -58,7 +58,7 @@
 			
 			$("#search").click(function() {
 				$("p").empty();
-				var Value = $("#searchBar").val()
+				let Value = $("#searchBar").val()
 				
 				// XML 파일의 corp_name 입력시 corp_code 꺼내오기
 				$.ajax({
@@ -115,9 +115,9 @@
 								reprt_code : "11013"
 							}
 						}).done(function(msg) {
-							var arrayList = [];
-							var shareList = [];
-							var numberofShare = [];
+							let arrayList = [];
+							let shareList = [];
+							let numberofShare = [];
 							for(var i=0; i < msg.list.length; i++) {
 								arrayList.push(msg.list[i].nm);
 								shareList.push(msg.list[i].trmend_posesn_stock_qota_rt);
@@ -157,20 +157,20 @@
 								reprt_code : "11011"
 							}
 						}).done(function(msg) {
-							var list = msg.list
+							let list = msg.list
 							
 							//자산총계
-							var totalAssets2020 = parseInt(list[2].thstrm_amount.replace(/,/g, ""));
-							var totalAssets2019 = parseInt(list[2].frmtrm_amount.replace(/,/g, ""));
-							var totalAssets2018 = parseInt(list[2].bfefrmtrm_amount.replace(/,/g, ""));
+							let totalAssets2020 = parseInt(list[2].thstrm_amount.replace(/,/g, ""));
+							let totalAssets2019 = parseInt(list[2].frmtrm_amount.replace(/,/g, ""));
+							let totalAssets2018 = parseInt(list[2].bfefrmtrm_amount.replace(/,/g, ""));
 							//부채총계
-							var totalLiabilities2020 = parseInt(list[5].thstrm_amount.replace(/,/g, ""));
-							var totalLiabilities2019 = parseInt(list[5].frmtrm_amount.replace(/,/g, ""));
-							var totalLiabilities2018 = parseInt(list[5].bfefrmtrm_amount.replace(/,/g, ""));
+							let totalLiabilities2020 = parseInt(list[5].thstrm_amount.replace(/,/g, ""));
+							let totalLiabilities2019 = parseInt(list[5].frmtrm_amount.replace(/,/g, ""));
+							let totalLiabilities2018 = parseInt(list[5].bfefrmtrm_amount.replace(/,/g, ""));
 							// 자본총계
-							var totalEquity2020 = parseInt(list[8].thstrm_amount.replace(/,/g, ""));
-							var totalEquity2019 = parseInt(list[8].frmtrm_amount.replace(/,/g, ""));
-							var totalEquity2018 = parseInt(list[8].bfefrmtrm_amount.replace(/,/g, ""));
+							let totalEquity2020 = parseInt(list[8].thstrm_amount.replace(/,/g, ""));
+							let totalEquity2019 = parseInt(list[8].frmtrm_amount.replace(/,/g, ""));
+							let totalEquity2018 = parseInt(list[8].bfefrmtrm_amount.replace(/,/g, ""));
 							
 							// 재무상태표 테이블 표
 							$("#totalAssets2018").html((String)(totalAssets2018).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
@@ -186,8 +186,8 @@
 							$("#totalEquity2020").html((String)(totalEquity2020).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							
 							// 재무상태표 그래프
-							const labels1 = [2018,2019,2020];
-							const data = {
+							let labels1 = [2018,2019,2020];
+							let data = {
 							  labels: labels1,
 							  datasets: [
 							    {
@@ -217,7 +217,7 @@
 							  ]
 							};
 							
-							const config = {
+							let config = {
 									  type: 'bar',
 									  data: data,
 									  options: {
@@ -241,17 +241,17 @@
 							var myChart = new Chart(ctx, config);
 							
 							// 매출액(2018-2020)
-							var revenue2018 = parseInt(msg.list[9].bfefrmtrm_amount.replace(/,/g, ""));
-							var revenue2019 = parseInt(msg.list[9].frmtrm_amount.replace(/,/g, ""));
-							var revenue2020 = parseInt(msg.list[9].thstrm_amount.replace(/,/g, ""));
+							let revenue2018 = parseInt(msg.list[9].bfefrmtrm_amount.replace(/,/g, ""));
+							let revenue2019 = parseInt(msg.list[9].frmtrm_amount.replace(/,/g, ""));
+							let revenue2020 = parseInt(msg.list[9].thstrm_amount.replace(/,/g, ""));
 							// 영업이익(2018-2020)
-							var profit2018 = parseInt(msg.list[10].bfefrmtrm_amount.replace(/,/g, ""));
-							var profit2019 = parseInt(msg.list[10].frmtrm_amount.replace(/,/g, ""));
-							var profit2020 = parseInt(msg.list[10].thstrm_amount.replace(/,/g, ""));
+							let profit2018 = parseInt(msg.list[10].bfefrmtrm_amount.replace(/,/g, ""));
+							let profit2019 = parseInt(msg.list[10].frmtrm_amount.replace(/,/g, ""));
+							let profit2020 = parseInt(msg.list[10].thstrm_amount.replace(/,/g, ""));
 							// 당기순이익(2018-2020)
-							var net2018 = parseInt(msg.list[12].bfefrmtrm_amount.replace(/,/g, ""));
-							var net2019 = parseInt(msg.list[12].frmtrm_amount.replace(/,/g, ""));
-							var net2020 = parseInt(msg.list[12].thstrm_amount.replace(/,/g, ""));
+							let net2018 = parseInt(msg.list[12].bfefrmtrm_amount.replace(/,/g, ""));
+							let net2019 = parseInt(msg.list[12].frmtrm_amount.replace(/,/g, ""));
+							let net2020 = parseInt(msg.list[12].thstrm_amount.replace(/,/g, ""));
 							
 							// 실적 테이블 표
 							$("#revenue2018").html((String)(revenue2018).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
@@ -267,8 +267,8 @@
 							$("#net2020").html((String)(net2020).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 							
 							// 실적 그래프
-							const labels = [2018,2019,2020];
-							const data2 = {
+							let labels = [2018,2019,2020];
+							let data2 = {
 							  labels: labels,
 							  datasets: [
 							    {
@@ -298,7 +298,7 @@
 							  ]
 							};
 							
-							const config2 = {
+							let config2 = {
 									  type: 'bar',
 									  data: data2,
 									  options: {
@@ -329,7 +329,7 @@
 			}) // click
 		}) // ready
 		</script>	
-		
+
 	<!-- 홈 UI -->
 	<nav>
 		<ul>
@@ -344,31 +344,31 @@
 		<input id="searchBar" value="" type="text" placeholder="종목명을 입력하세요">
 		<button id="search">검색</button>
 	</div>
-	
+
 	<!-- 본문 -->
 	<br><br>
 	<p class="list" style="display: none; border-bottom: 1px solid gray;"></p>
 	<h1 class="list" style="margin: 30px 0 30px 30px; display: none; text-align: center;">기업개요</h1>
 	<p id="intro" style="margin: 30px 0 30px 30px; text-align: center;"></p>
-	
+
 	<p class="list" style="display: none; border-bottom: 1px solid gray;"></p>
-	
+
 	<h1 class="list" style="display: none; margin: 30px 0 30px 30px; text-align: center;">배당 현황</h1>
 	<p id="dividend" style="margin: 30px 0 30px 30px; text-align: center;"></p>
-	
+
 	<p class="list" style="display: none; border-bottom: 1px solid gray;"></p>
-	
+
   <h1 class="list" style="display: none; margin: 30px 0 30px 30px; text-align: center;">최대주주 현황</h1>
-  
+
  <div class="chart-container" style="position: relative; margin: auto; height:20vh; width:40vw">
     <canvas id="myChart"></canvas>
 </div>
-	
+
 	<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 	<p class="list" style="display: none; border-bottom: 1px solid gray;"></p>
 	<h1 class="list" style="display: none; margin: 30px 0 30px 30px; text-align: center;">재무 현황</h1>
 	<!-- <p id="finance"></p> -->
-	
+
 	<!-- 
 	<div id="chartDiv" style="position: relative; max-width: 740px;height: 400px;margin: 0px auto">
     </div>
@@ -406,7 +406,7 @@
         </tbody>
   	</table>
   	<br><br><br><br>
-     
+
     <div style="position: relative; margin: auto; height:20vh; width:40vw">
     <canvas id="myChart2"></canvas>
   	</div>
