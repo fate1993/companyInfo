@@ -3,7 +3,7 @@
 <html>
 <head>
 <title>홈페이지 소개</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css"> 
 </head>
 <body>
 <nav>
