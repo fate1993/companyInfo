@@ -10,6 +10,6 @@
 - JSON 타입으로 가져온 데이터를 차트 라이브러리를 이용해 시각화
 - 오픈 API를 제공하는 DART 측이 정해 놓은 요청인자가 종목코드로 되어있어 검색을 기업명이 아닌 종목코드로 해야하는 문제가 있었으나 별도의 xml 파일에서 종목명에 맞는 종목코드를 추출하는 방법으로 해결
 ## 사용된 오픈 API
-- OPEN DART
-- chart.js
+- [OPEN DART](https://opendart.fss.or.kr/)
+- [chart.js](https://www.chartjs.org/)
 - jQuery
