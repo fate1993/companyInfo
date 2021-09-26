@@ -21,8 +21,7 @@
 
 # 주요 기능
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/455376e0-b8c9-45ff-8c64-567b89ff8ddd/Untitled.gif)
-
+![companyInfo](https://user-images.githubusercontent.com/77215614/134815315-39539b19-e870-4d4a-838e-d2424e930f09.gif)
 - RESTful API를 이용해 DART에서 가져온 기업개요, 배당현황, 최대주주 현황, 재무현황, 실적추이 등 데이터를 화면에 출력
 - JSON 타입으로 가져온 데이터를 chart.js 라이브러리를 이용해 막대 그래프, 파이 차트 등으로 시각화
 - Ajax를 이용해 전체 페이지 새로고침 없이 데이터 출력
@@ -32,8 +31,5 @@
 ---
 
 # 프로젝트 관련 링크
-
-- 깃허브 : [https://github.com/fate1993/companyInfo](https://github.com/fate1993/companyInfo)
 - 후기 및 느낀점 : [https://change-words.tistory.com/117?category=902998](https://change-words.tistory.com/117?category=902998)
-
 ---
